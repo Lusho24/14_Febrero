@@ -195,16 +195,23 @@
            ============================================ */
         .container {
             width: 100%;
-            max-width: 550px;
+            max-width: 500px;
             background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            padding: 50px 40px;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2),
-                        0 10px 30px rgba(238, 119, 82, 0.15);
+            backdrop-filter: blur(18px);
+            border-radius: 20px;
+            padding: 30px 25px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12),
+                        0 8px 20px rgba(238, 119, 82, 0.08);
             position: relative;
             z-index: 10;
             border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Ajustes para centrar mejor la card en pantallas altas */
+        @media (min-height: 800px) {
+            .container {
+                margin: auto 0;
+            }
         }
 
         /* Corazón en esquina superior */
@@ -473,6 +480,14 @@
 
         .gift-box.opened {
             animation: giftExplode 0.7s ease-out forwards;
+
+            /* Botón pequeño dentro del chocolate */
+            .btn.small {
+                padding: 8px 18px;
+                font-size: 0.95rem;
+                max-width: 110px;
+                border-radius: 12px;
+            }
         }
 
         @keyframes giftExplode {
@@ -492,8 +507,9 @@
 
         .gift-reveal {
             display: none;
-            font-size: 4rem;
-            margin: 20px 0;
+            width: 160px;
+            max-width: 45%;
+            margin: 12px auto;
             animation: revealZoom 0.7s ease-out;
         }
 
@@ -526,6 +542,26 @@
             font-size: 1.3rem;
             color: var(--accent);
             font-weight: 700;
+        }
+
+        /* Centrar imagen y texto de resultado */
+        #resultImage {
+            display: block;
+            margin: 6px auto 0 auto;
+            width: auto;
+            max-width: 320px;
+            max-height: 520px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+            object-fit: cover;
+        }
+
+        #resultText {
+            text-align: center;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 8px;
         }
 
         /* ============================================
@@ -664,10 +700,32 @@
             
             <div class="gift-container" id="giftContainer" style="display: none;">
                 <div class="gift-box" id="giftBox" onclick="openGift()" role="button" aria-label="Abrir regalo" tabindex="0">🎁</div>
-                <div class="gift-reveal" id="giftReveal">🍫</div>
-                <div class="gift-message" id="giftMessage">
-                    <p>Felicidades ganaste un chocolate</p>
-                    <p class="subtitle">(te recomiendo abrirlo ahora, te quiero 💕!)</p>
+                <img class="gift-reveal" id="giftReveal" src="emoji_espera.webp" alt="espera" />
+
+                <!-- Pregunta dentro del chocolate: se muestra al abrir -->
+                <div class="chocolate-question" id="chocolateQuestion" style="display:none; text-align:center; margin-top:6px;">
+                    <p style="font-weight:700; color:var(--accent);">Te quiero hacer una pregunta, la cual está en el chocolate</p>
+                    <div style="display:flex; gap:12px; justify-content:center; margin-top:10px;">
+                        <button class="btn small" id="yesBtn" onclick="handleYes()">Sí</button>
+                        <button class="btn small" id="noBtn" onclick="handleNo()">No</button>
+                    </div>
+                </div>
+
+                <img id="resultImage" src="" alt="" style="display:none; width:70%; max-width:300px; margin:10px auto; border-radius:12px; box-shadow:0 10px 24px rgba(0,0,0,0.12);">
+                <div class="gift-message" id="giftMessage" style="display:none; margin-top:8px; text-align:center;">
+                    <p id="resultText" style="font-weight:700; color:var(--accent); margin:0;"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================
+             PANTALLA 4: GIFT (para respuesta NO)
+             ============================================ -->
+        <div id="screen4" class="screen">
+            <div style="text-align:center;">
+                <img id="noGiftImage" src="" alt="gift" style="width:40%; max-width:220px; margin:18px auto; display:block;">
+                <div style="margin-top:12px;">
+                    <button class="btn" onclick="changeMindFromGift()">Cambiar de opinión</button>
                 </div>
             </div>
         </div>
@@ -707,6 +765,10 @@
 
         // Índices de preguntas para las cuales NO se debe mostrar la respuesta correcta al fallar
         const dontRevealCorrect = [4];
+
+        // Guardar textos originales de la pantalla final para restaurar si el usuario cambia de opinión
+        const originalFinalTitle = document.getElementById('finalTitle').textContent;
+        const originalFinalMessage = document.getElementById('finalMessage').textContent;
 
         // Estado del juego
         let currentQuestionIndex = 0;
@@ -878,19 +940,120 @@
         function openGift() {
             const giftBox = document.getElementById('giftBox');
             const giftReveal = document.getElementById('giftReveal');
+            const chocolateQuestion = document.getElementById('chocolateQuestion');
             const giftMessage = document.getElementById('giftMessage');
-            
+            const resultImage = document.getElementById('resultImage');
+            const resultText = document.getElementById('resultText');
+
             // Evitar múltiples clics
             if (giftBox.classList.contains('opened')) return;
-            
+
             // Animación de apertura
             giftBox.classList.add('opened');
-            
-            // Mostrar chocolate y mensaje
+
+            // Después de la animación, mostrar la pregunta dentro del chocolate (botones Sí/No)
             setTimeout(() => {
                 giftReveal.classList.add('show');
-                giftMessage.classList.add('show');
+                // mostrar la pregunta y esconder el mensaje/resultado previo
+                chocolateQuestion.style.display = 'block';
+                giftMessage.style.display = 'none';
+                resultImage.style.display = 'none';
+                resultText.style.display = 'none';
             }, 700);
+        }
+
+        // URL de las imágenes locales para las respuestas Sí/No
+        const noImageUrl = 'emoji_no.webp';
+        const yesImageUrl = 'foto_si.jpeg';
+
+        function handleYes() {
+            const chocolateQuestion = document.getElementById('chocolateQuestion');
+            const resultImage = document.getElementById('resultImage');
+            const finalTitle = document.getElementById('finalTitle');
+            const finalMessage = document.getElementById('finalMessage');
+            const subtitle = document.querySelector('#screen3 .subtitle');
+
+            // Mostrar imagen celebratoria (solo imagen abajo)
+            resultImage.src = yesImageUrl;
+            resultImage.style.display = 'block';
+            chocolateQuestion.style.display = 'none';
+
+            // Colocar la frase sólo en el espacio superior (finalTitle)
+            if (finalTitle) {
+                finalTitle.textContent = 'Yeii, ve aprendiendo las canciones para el 30 de abril!';
+                finalTitle.style.display = 'block';
+                finalTitle.style.fontSize = '1.15rem';
+            }
+            if (finalMessage) finalMessage.style.display = 'none';
+            if (subtitle) subtitle.style.display = 'none';
+
+            // ocultar botón de revelar y emoji de espera
+            const revealBtn = document.querySelector('#screen3 > button.btn');
+            if (revealBtn) revealBtn.style.display = 'none';
+            const giftReveal = document.getElementById('giftReveal');
+            if (giftReveal) giftReveal.classList.remove('show');
+            // subir la imagen hacia el encabezado
+            resultImage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function handleNo() {
+            const chocolateQuestion = document.getElementById('chocolateQuestion');
+            const resultImage = document.getElementById('resultImage');
+            const resultText = document.getElementById('resultText');
+            const giftMessage = document.getElementById('giftMessage');
+
+            // preparar la imagen para la pantalla de gift (screen4)
+            const noImg = (noImageUrl && noImageUrl.trim() !== '') ? noImageUrl : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="72">😕</text></svg>';
+            const noGiftImage = document.getElementById('noGiftImage');
+            if (noGiftImage) {
+                noGiftImage.src = noImg;
+            }
+
+            // ocultar elementos de screen3
+            chocolateQuestion.style.display = 'none';
+            const finalTitle = document.getElementById('finalTitle');
+            const finalMessage = document.getElementById('finalMessage');
+            const subtitle = document.querySelector('#screen3 .subtitle');
+            if (finalTitle) finalTitle.style.display = 'none';
+            if (finalMessage) finalMessage.style.display = 'none';
+            if (subtitle) subtitle.style.display = 'none';
+            const revealBtn = document.querySelector('#screen3 > button.btn');
+            if (revealBtn) revealBtn.style.display = 'none';
+            const giftReveal = document.getElementById('giftReveal');
+            if (giftReveal) giftReveal.classList.remove('show');
+
+            // navegar a la pantalla del gift
+            navigateTo(4);
+        }
+
+        function changeMindFromGift() {
+            // Restaurar pantalla 3 y mostrar la pregunta dentro del chocolate
+            navigateTo(3);
+            const chocolateQuestion = document.getElementById('chocolateQuestion');
+            const resultImage = document.getElementById('resultImage');
+            const giftMessage = document.getElementById('giftMessage');
+            const finalTitle = document.getElementById('finalTitle');
+            const finalMessage = document.getElementById('finalMessage');
+            const subtitle = document.querySelector('#screen3 .subtitle');
+
+            // restaurar textos
+            if (finalTitle) {
+                finalTitle.textContent = originalFinalTitle;
+                finalTitle.style.display = 'block';
+                finalTitle.style.fontSize = '';
+            }
+            if (finalMessage) {
+                finalMessage.textContent = originalFinalMessage;
+                finalMessage.style.display = 'block';
+            }
+            if (subtitle) subtitle.style.display = 'block';
+
+            // ocultar resultado y mostrar la pregunta
+            if (resultImage) resultImage.style.display = 'none';
+            if (giftMessage) giftMessage.style.display = 'none';
+            if (chocolateQuestion) chocolateQuestion.style.display = 'block';
+            const yesBtn = document.getElementById('yesBtn');
+            if (yesBtn) yesBtn.focus();
         }
 
         // ============================================
