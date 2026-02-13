@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Un juego especial de San Valentín">
+    <title>Feliz San Valentín 💖</title>
+    <style>
+        /* ============================================
+           VARIABLES Y RESET
+           ============================================ */
+        :root {
+            --primary: #ff6b9d;
+            --secondary: #ffa5c8;
+            --accent: #ff1e56;
+            --text-dark: #5a3a3a;
+            --text-light: #8b5a5a;
+            --white: #ffffff;
+            --success: #28a745;
+            --error: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ============================================
+           BODY Y FONDO MEJORADO
+           ============================================ */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Partículas flotantes de corazones */
+        .heart-particle {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.3;
+            animation: floatHeart 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .heart-particle:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+            font-size: 2rem;
+        }
+
+        .heart-particle:nth-child(2) {
+            top: 20%;
+            right: 15%;
+            animation-delay: 2s;
+            font-size: 1.8rem;
+        }
+
+        .heart-particle:nth-child(3) {
+            bottom: 15%;
+            left: 20%;
+            animation-delay: 4s;
+            font-size: 1.6rem;
+        }
+
+        .heart-particle:nth-child(4) {
+            bottom: 25%;
+            right: 10%;
+            animation-delay: 6s;
+            font-size: 2.2rem;
+        }
+
+        .heart-particle:nth-child(5) {
+            top: 50%;
+            left: 5%;
+            animation-delay: 1s;
+            font-size: 1.4rem;
+        }
+
+        .heart-particle:nth-child(6) {
+            top: 60%;
+            right: 8%;
+            animation-delay: 3s;
+            font-size: 1.7rem;
+        }
+
+        @keyframes floatHeart {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 0.2;
+            }
+            25% {
+                transform: translateY(-30px) rotate(10deg) scale(1.1);
+                opacity: 0.4;
+            }
+            50% {
+                transform: translateY(-20px) rotate(-10deg) scale(0.9);
+                opacity: 0.3;
+            }
+            75% {
+                transform: translateY(-40px) rotate(5deg) scale(1.05);
+                opacity: 0.35;
+            }
+        }
+
+        /* Burbujas decorativas */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            animation: riseBubble 10s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .bubble:nth-child(7) {
+            width: 80px;
+            height: 80px;
+            bottom: -100px;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .bubble:nth-child(8) {
+            width: 120px;
+            height: 120px;
+            bottom: -150px;
+            left: 60%;
+            animation-delay: 3s;
+        }
+
+        .bubble:nth-child(9) {
+            width: 60px;
+            height: 60px;
+            bottom: -80px;
+            left: 80%;
+            animation-delay: 6s;
+        }
+
+        @keyframes riseBubble {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* ============================================
+           CONTENEDOR PRINCIPAL
+           ============================================ */
+        .container {
+            width: 100%;
+            max-width: 550px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Corazón en esquina superior */
+        .container::before {
+            content: '💖';
+            position: absolute;
+            top: -20px;
+            right: 30px;
+            font-size: 3rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* ============================================
+           SCREENS (PANTALLAS)
+           ============================================ */
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================
+           TIPOGRAFÍA
+           ============================================ */
+        h1 {
+            font-size: 2.2rem;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 1.3;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1.15rem;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* ============================================
+           BOTONES
+           ============================================ */
+        .btn {
+            display: block;
+            width: 100%;
+            max-width: 280px;
+            margin: 25px auto;
+            padding: 16px 35px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--white);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(255, 107, 157, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 10px rgba(255, 107, 157, 0.2);
+        }
+
+        /* ============================================
+           MARCADOR DE PUNTOS
+           ============================================ */
+        .score {
+            text-align: center;
+            font-size: 1.4rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 25px;
+            padding: 12px 25px;
+            background: rgba(255, 107, 157, 0.1);
+            border-radius: 15px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        /* ============================================
+           CONTENEDOR DE PREGUNTA
+           ============================================ */
+        .question-box {
+            margin: 30px 0;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 165, 200, 0.1);
+            border-radius: 12px;
+        }
+
+        /* ============================================
+           OPCIONES DE RESPUESTA
+           ============================================ */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 16px 20px;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            background: var(--white);
+            border: 2.5px solid var(--secondary);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 165, 200, 0.15);
+            border-color: var(--primary);
+            transform: translateX(8px);
+        }
+
+        .option.selected {
+            background: rgba(255, 107, 157, 0.2);
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .option.correct {
+            background: rgba(40, 167, 69, 0.15);
+            border-color: var(--success);
+            color: #155724;
+        }
+
+        .option.incorrect {
+            background: rgba(220, 53, 69, 0.15);
+            border-color: var(--error);
+            color: #721c24;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* ============================================
+           FEEDBACK
+           ============================================ */
+        .feedback {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 20px 0;
+            padding: 15px 25px;
+            border-radius: 12px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.correct {
+            color: var(--success);
+            background: rgba(40, 167, 69, 0.1);
+        }
+
+        .feedback.incorrect {
+            color: var(--error);
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        /* ============================================
+           REGALO
+           ============================================ */
+        .gift-container {
+            text-align: center;
+            margin: 35px 0;
+        }
+
+        .gift-box {
+            display: inline-block;
+            font-size: 6rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            animation: bounce 2.5s infinite;
+            filter: drop-shadow(0 10px 20px rgba(255, 107, 157, 0.3));
+        }
+
+        .gift-box:hover {
+            transform: scale(1.15) rotate(10deg);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .gift-box.opened {
+            animation: explode 0.7s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.4) rotate(180deg);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .gift-reveal {
+            display: none;
+            font-size: 4rem;
+            margin: 20px 0;
+            animation: zoomIn 0.6s ease-out;
+        }
+
+        .gift-reveal.show {
+            display: block;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .gift-message {
+            display: none;
+            margin-top: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .gift-message.show {
+            display: block;
+        }
+
+        .gift-message p {
+            font-size: 1.3rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 14px 30px;
+            }
+
+            .option {
+                font-size: 0.95rem;
+                padding: 14px 18px;
+            }
+
+            .gift-box {
+                font-size: 4.5rem;
+            }
+
+            .gift-reveal {
+                font-size: 3rem;
+            }
+
+            /* Ajustar corazones en móvil */
+            .heart-particle {
+                font-size: 1.2rem;
+            }
+
+            .heart-particle:nth-child(1),
+            .heart-particle:nth-child(4) {
+                font-size: 1.5rem;
+            }
+
+            /* Ajustar burbujas en móvil */
+            .bubble:nth-child(7) {
+                width: 50px;
+                height: 50px;
+            }
+
+            .bubble:nth-child(8) {
+                width: 80px;
+                height: 80px;
+            }
+
+            .bubble:nth-child(9) {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* Efecto hover mejorado para mobile */
+        @media (hover: none) {
+            .option:hover {
+                transform: none;
+            }
+            
+            .option:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* Optimización para pantallas muy pequeñas */
+        @media (max-width: 400px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .btn {
+                font-size: 0.95rem;
+                padding: 12px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de corazones -->
+    <div class="heart-particle">💖</div>
+    <div class="heart-particle">💕</div>
+    <div class="heart-particle">💗</div>
+    <div class="heart-particle">💝</div>
+    <div class="heart-particle">💓</div>
+    <div class="heart-particle">💞</div>
+    
+    <!-- Burbujas -->
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+
+    <div class="container">
+        <!-- ============================================
+             PANTALLA 1: LANDING
+             ============================================ -->
+        <div id="screen1" class="screen active">
+            <h1>Feliz Primer San Valentín Amor 💖</h1>
+            <p class="subtitle">Vamos a jugar un juego</p>
+            <button class="btn" onclick="navigateTo(2)" aria-label="Iniciar juego">Iniciar</button>
+        </div>
+
+        <!-- ============================================
+             PANTALLA 2: TRIVIA
+             ============================================ -->
+        <div id="screen2" class="screen">
+            <h2>¿Cuánto me conoces? 💭</h2>
+            <div class="score" id="scoreDisplay">Puntos: 0/5</div>
+            
+            <div class="question-box" id="questionContainer"></div>
+            
+            <div id="feedbackContainer"></div>
+            
+            <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled aria-label="Siguiente pregunta">Siguiente</button>
+        </div>
+
+        <!-- ============================================
+             PANTALLA 3: FINAL
+             ============================================ -->
+        <div id="screen3" class="screen">
+            <h2 id="finalTitle">¡Increíble! ✨</h2>
+            <p id="finalMessage" style="margin-bottom: 15px;"></p>
+            <p class="subtitle">pero… hay algo más</p>
+            <button class="btn" onclick="revealGift()" aria-label="Desbloquear regalo">Desbloquear regalo</button>
+            
+            <div class="gift-container" id="giftContainer" style="display: none;">
+                <div class="gift-box" id="giftBox" onclick="openGift()" role="button" aria-label="Abrir regalo" tabindex="0">🎁</div>
+                <div class="gift-reveal" id="giftReveal">🍫</div>
+                <div class="gift-message" id="giftMessage">
+                    <p>Felicidades ganaste un chocolate</p>
+                    <p class="subtitle">que lo disfrutes 💝</p>
+                    <p class="subtitle">(te recomiendo abrirlo ahora!) </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN DEL JUEGO
+        // ============================================
+        const triviaQuestions = [
+            {
+                question: "¿Cuál es mi comida favorita?",
+                options: ["Tortillas de Papa", "Hamburguesa", "Sushi", "Tacos"],
+                correct: 0
+            },
+            {
+                question: "¿Qué es lo que más me gusta hacer contigo?",
+                options: ["Ver pelis juntos", "Dormir", "Comer juntos", "Chismear", "Todas las anteriores"],
+                correct: 4
+            },
+            {
+                question: "¿Qúe hago cuando sobrepienso?",
+                options: [ "Me rio", "Me pongo helado", "Me pongo triste", "No pasa nada"],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es mi color favorito?",
+                options: ["Morado", "Verde", "Azul", "Rosa"],
+                correct: 2
+            },
+            {
+                question: "¿Cuál es mi artista favorito?",
+                options: ["3AM", "Beret", "José Madero", "Siddhartha"],
+                correct: 0
+            }
+        ];
+
+        // Estado del juego
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        // ============================================
+        // NAVEGACIÓN ENTRE PANTALLAS
+        // ============================================
+        function navigateTo(screenNumber) {
+            // Ocultar todas las pantallas
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Mostrar la pantalla objetivo
+            const targetScreen = document.getElementById(`screen${screenNumber}`);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+            }
+            
+            // Iniciar trivia si vamos a la pantalla 2
+            if (screenNumber === 2) {
+                initTrivia();
+            }
+        }
+
+        // ============================================
+        // INICIALIZAR TRIVIA
+        // ============================================
+        function initTrivia() {
+            currentQuestionIndex = 0;
+            score = 0;
+            hasAnswered = false;
+            updateScore();
+            displayQuestion();
+        }
+
+        // ============================================
+        // MOSTRAR PREGUNTA ACTUAL
+        // ============================================
+        function displayQuestion() {
+            const question = triviaQuestions[currentQuestionIndex];
+            const questionContainer = document.getElementById('questionContainer');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Reset estado
+            hasAnswered = false;
+            feedbackContainer.innerHTML = '';
+            nextBtn.disabled = true;
+            
+            // Construir HTML de la pregunta
+            let html = `
+                <div class="question-text">${question.question}</div>
+                <div class="options">
+            `;
+            
+            question.options.forEach((option, index) => {
+                html += `
+                    <div class="option" 
+                         onclick="selectOption(${index})" 
+                         data-index="${index}"
+                         role="button"
+                         tabindex="0"
+                         aria-label="Opción: ${option}">
+                        ${option}
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            questionContainer.innerHTML = html;
+        }
+
+        // ============================================
+        // SELECCIONAR OPCIÓN
+        // ============================================
+        function selectOption(selectedIndex) {
+            // Evitar múltiples respuestas
+            if (hasAnswered) return;
+            
+            hasAnswered = true;
+            const question = triviaQuestions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            let isCorrect = selectedIndex === question.correct;
+            
+            // Actualizar UI de opciones
+            options.forEach((option, index) => {
+                option.classList.add('disabled');
+                
+                if (index === selectedIndex) {
+                    option.classList.add('selected');
+                    if (isCorrect) {
+                        option.classList.add('correct');
+                    } else {
+                        option.classList.add('incorrect');
+                    }
+                }
+                
+                // Mostrar la respuesta correcta si falló
+                if (!isCorrect && index === question.correct) {
+                    option.classList.add('correct');
+                }
+            });
+            
+            // Actualizar puntuación y feedback
+            if (isCorrect) {
+                score++;
+                updateScore();
+                feedbackContainer.innerHTML = '<div class="feedback correct">¡Correcto! 🎉</div>';
+            } else {
+                feedbackContainer.innerHTML = '<div class="feedback incorrect">Casi 😅</div>';
+            }
+            
+            // Habilitar botón siguiente
+            nextBtn.disabled = false;
+        }
+
+        // ============================================
+        // ACTUALIZAR MARCADOR
+        // ============================================
+        function updateScore() {
+            document.getElementById('scoreDisplay').textContent = `Puntos: ${score}/5`;
+        }
+
+        // ============================================
+        // SIGUIENTE PREGUNTA
+        // ============================================
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < triviaQuestions.length) {
+                displayQuestion();
+            } else {
+                showFinalScreen();
+            }
+        }
+
+        // ============================================
+        // PANTALLA FINAL
+        // ============================================
+        function showFinalScreen() {
+            const finalMessage = document.getElementById('finalMessage');
+            
+            if (score === 5) {
+                finalMessage.textContent = 'Muy bien felicidades 💖 se nota que me conoces y a uno de mis artistas favoritos';
+            } else {
+                finalMessage.textContent = `Lo hiciste increíble 💕 (${score}/5 puntos)`;
+            }
+            
+            navigateTo(3);
+        }
+
+        // ============================================
+        // REVELAR REGALO
+        // ============================================
+        function revealGift() {
+            document.getElementById('giftContainer').style.display = 'block';
+            document.querySelector('#screen3 .btn').style.display = 'none';
+        }
+
+        // ============================================
+        // ABRIR REGALO
+        // ============================================
+        function openGift() {
+            const giftBox = document.getElementById('giftBox');
+            const giftReveal = document.getElementById('giftReveal');
+            const giftMessage = document.getElementById('giftMessage');
+            
+            // Evitar múltiples clics
+            if (giftBox.classList.contains('opened')) return;
+            
+            // Animación de apertura
+            giftBox.classList.add('opened');
+            
+            // Mostrar chocolate y mensaje
+            setTimeout(() => {
+                giftReveal.classList.add('show');
+                giftMessage.classList.add('show');
+            }, 700);
+        }
+
+        // ============================================
+        // ACCESIBILIDAD: SOPORTE DE TECLADO
+        // ============================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const focused = document.activeElement;
+                if (focused.classList.contains('gift-box') && !focused.classList.contains('opened')) {
+                    e.preventDefault();
+                    openGift();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
