@@ -643,7 +643,7 @@
              PANTALLA 2: TRIVIA
              ============================================ -->
         <div id="screen2" class="screen">
-            <h2>¿Cuánto me conoces? 💭</h2>
+            <h2>¿Cuánto sabes de nosotros? 💭</h2>
             <div class="score" id="scoreDisplay">Puntos: 0/5</div>
             
             <div class="question-box" id="questionContainer"></div>
@@ -679,31 +679,34 @@
         // ============================================
         const triviaQuestions = [
             {
-                question: "¿Cuál es mi comida favorita?",
-                options: ["Tortillas de Papa", "Hamburguesa", "Sushi", "Tacos"],
+                question: "¿Cuál es el primer concierto que fuimos juntos?",
+                options: ["Paulo Londra", "Marquéz", "Quito Fest", "AU-D"],
                 correct: 0
             },
             {
-                question: "¿Qué es lo que más me gusta hacer contigo?",
-                options: ["Ver pelis juntos", "Dormir", "Chismear", "Todas las anteriores"],
+                question: "¿Qué es lo que más nos gusta hacer juntos?",
+                options: ["Ver pelis", "Dormir", "Chismear", "Todas las anteriores"],
                 correct: 3
             },
             {
-                question: "¿Qué hago cuando sobrepienso?",
-                options: ["Me rio", "Me pongo helado", "Me pongo triste", "No pasa nada"],
+                question: "¿Cuál es nuestra Hamburguesa favorita?",
+                options: ["Chios", "Chubb", "Smash", "QBS"],
                 correct: 1
             },
             {
-                question: "¿Cuál es mi color favorito?",
-                options: ["Morado", "Verde", "Azul", "Rosa"],
+                question: "¿En donde fué nuestro primer beso?",
+                options: ["Cine", "Parque", "Terraza", "En la calle"],
                 correct: 2
             },
             {
-                question: "¿Cuál es mi artista favorito?",
-                options: ["3AM", "Beret", "José Madero", "Siddhartha"],
-                correct: 0
+                question: "¿Cuál es el siguiente concierto al que iremos?",
+                options: ["3AM", "Beret", "Sebastián Yatra", "Siddhartha"],
+                correct: 2
             }
         ];
+
+        // Índices de preguntas para las cuales NO se debe mostrar la respuesta correcta al fallar
+        const dontRevealCorrect = [4];
 
         // Estado del juego
         let currentQuestionIndex = 0;
@@ -807,8 +810,8 @@
                     }
                 }
                 
-                // Mostrar la respuesta correcta si falló
-                if (!isCorrect && index === question.correct) {
+                // Mostrar la respuesta correcta si falló (salvo preguntas en la lista `dontRevealCorrect`)
+                if (!isCorrect && index === question.correct && !dontRevealCorrect.includes(currentQuestionIndex)) {
                     option.classList.add('correct');
                 }
             });
@@ -819,7 +822,7 @@
                 updateScore();
                 feedbackContainer.innerHTML = '<div class="feedback correct">¡Correcto! 🎉</div>';
             } else {
-                feedbackContainer.innerHTML = '<div class="feedback incorrect">Casi 😅</div>';
+                feedbackContainer.innerHTML = '<div class="feedback incorrect">Casi, Buu 👎!</div>';
             }
             
             // Habilitar botón siguiente
@@ -853,7 +856,7 @@
             const finalMessage = document.getElementById('finalMessage');
             
             if (score === 5) {
-                finalMessage.textContent = 'Felicidades 💖 se nota que me conoces y a uno de mis artistas favoritos';
+                finalMessage.textContent = 'Felicidades Aprobaste!💖';
             } else {
                 finalMessage.textContent = `Lo hiciste bien 💕 (${score}/5 puntos)`;
             }
