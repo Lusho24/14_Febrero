@@ -667,8 +667,7 @@
                 <div class="gift-reveal" id="giftReveal">🍫</div>
                 <div class="gift-message" id="giftMessage">
                     <p>Felicidades ganaste un chocolate</p>
-                    <p class="subtitle">que lo disfrutes 💝</p>
-                    <p class="subtitle">(te recomiendo abrirlo ahora!)</p>
+                    <p class="subtitle">(te recomiendo abrirlo ahora, te quiero 💕!)</p>
                 </div>
             </div>
         </div>
@@ -854,9 +853,9 @@
             const finalMessage = document.getElementById('finalMessage');
             
             if (score === 5) {
-                finalMessage.textContent = 'Muy bien felicidades 💖 se nota que me conoces y a uno de mis artistas favoritos';
+                finalMessage.textContent = 'Felicidades 💖 se nota que me conoces y a uno de mis artistas favoritos';
             } else {
-                finalMessage.textContent = `Lo hiciste increíble 💕 (${score}/5 puntos)`;
+                finalMessage.textContent = `Lo hiciste bien 💕 (${score}/5 puntos)`;
             }
             
             navigateTo(3);
